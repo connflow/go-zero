@@ -2,7 +2,7 @@
 func (l *{{.logicName}}) {{.method}} ({{if .hasReq}}in {{.request}}{{if .stream}},stream {{.streamBody}}{{end}}{{else}}stream {{.streamBody}}{{end}}) ({{if .hasReply}}{{.response}},{{end}} error) {
 	// todo: check your logic here and delete this line
 
-	{{if eq .operate "create"}}
+	{{if eq .operate "Create"}}
 	err := in.Validate()
 	if err != nil {
 		return nil, err
