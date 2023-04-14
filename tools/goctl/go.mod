@@ -2,6 +2,8 @@ module github.com/zeromicro/go-zero/tools/goctl
 
 go 1.18
 
+replace github.com/zeromicro/go-zero/tools/goctl => ./
+
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/emicklei/proto v1.11.1
