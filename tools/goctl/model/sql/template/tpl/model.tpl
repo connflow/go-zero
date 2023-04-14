@@ -36,7 +36,7 @@ func New{{.upperStartCamelObject}}Model(conn sqlx.SqlConn{{if .withCache}}, c ca
 }
 
 func (m *default{{.upperStartCamelObject}}Model) FindOneByQuery(ctx context.Context, filter queryinfo.Expression) (*{{.upperStartCamelObject}}, error) {
-	query, _, err := dialect.From(m.table).Where(filter).ToSQL()
+	query, _, err := dialect.From(m.tableRaw).Where(filter).ToSQL()
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindOneByQuery(ctx context.Cont
 }
 
 func (m *default{{.upperStartCamelObject}}Model) FindCount(ctx context.Context, filter queryinfo.Expression) (int64, error) {
-	query, _, err := dialect.From(m.table).Select(goqu.COUNT("*")).Where(filter).ToSQL()
+	query, _, err := dialect.From(m.tableRaw).Select(goqu.COUNT("*")).Where(filter).ToSQL()
 	if err != nil {
 		return 0, err
 	}
@@ -70,7 +70,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindCount(ctx context.Context, 
 }
 
 func (m *default{{.upperStartCamelObject}}Model) FindAll(ctx context.Context, filter queryinfo.Expression, order []queryinfo.OrderedExpression, limit int64, offset int64) ([]*{{.upperStartCamelObject}}, error) {
-	b := dialect.From(m.table).Where(filter).Order(order...).Limit(uint(limit))
+	b := dialect.From(m.tableRaw).Where(filter).Order(order...).Limit(uint(limit))
 	if offset > 0 {
 		b = b.Offset(uint(offset))
 	}

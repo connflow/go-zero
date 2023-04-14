@@ -109,7 +109,8 @@ func (l *{{.logicName}}) {{.method}} ({{if .hasReq}}in {{.request}}{{if .stream}
 		Data:      res,
 		TotalSize: count,
 	}, nil
-	{{end}}
+	{{else}}
 
 	return {{if .hasReply}}&{{.responseType}}{},{{end}} nil
+	{{end}}
 }

@@ -23,6 +23,7 @@ func genNew(table Table, withCache, postgreSql bool) (string, error) {
 		Parse(text).
 		Execute(map[string]any{
 			"table":                 t,
+			"tableRaw":              fmt.Sprintf(`"%s"`, table.Name.Source()),
 			"withCache":             withCache,
 			"upperStartCamelObject": table.Name.ToCamel(),
 			"data":                  table,

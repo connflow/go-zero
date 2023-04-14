@@ -2,5 +2,6 @@ func new{{.upperStartCamelObject}}Model(conn sqlx.SqlConn{{if .withCache}}, c ca
 	return &default{{.upperStartCamelObject}}Model{
 		{{if .withCache}}CachedConn: sqlc.NewConn(conn, c, opts...){{else}}conn:conn{{end}},
 		table:      {{.table}},
+		tableRaw:   {{.tableRaw}},
 	}
 }
