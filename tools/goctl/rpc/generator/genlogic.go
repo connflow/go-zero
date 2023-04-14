@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/gobuffalo/flect"
 	"github.com/zeromicro/go-zero/core/collection"
 	conf "github.com/zeromicro/go-zero/tools/goctl/config"
 	"github.com/zeromicro/go-zero/tools/goctl/rpc/parser"
@@ -15,13 +16,8 @@ import (
 	"github.com/zeromicro/go-zero/tools/goctl/util/stringx"
 )
 
-const logicFunctionTemplate = `{{if .hasComment}}{{.comment}}{{end}}
-func (l *{{.logicName}}) {{.method}} ({{if .hasReq}}in {{.request}}{{if .stream}},stream {{.streamBody}}{{end}}{{else}}stream {{.streamBody}}{{end}}) ({{if .hasReply}}{{.response}},{{end}} error) {
-	// todo: add your logic here and delete this line
-	
-	return {{if .hasReply}}&{{.responseType}}{},{{end}} nil
-}
-`
+//go:embed logic-func.tpl
+var logicFunctionTemplate string
 
 //go:embed logic.tpl
 var logicTemplate string
@@ -136,11 +132,36 @@ func (g *Generator) genLogicFunction(serviceName, goPackage, logicName string,
 		return "", err
 	}
 
+	operate := ""
+	entityName := flect.Singularize(parser.CamelCase(serviceName))
+	entitiesName := flect.Pluralize(parser.CamelCase(serviceName))
+
+	if strings.HasPrefix(rpc.Name, "Create") && rpc.Name == "Create"+entityName {
+		operate = "Create"
+	}
+	if strings.HasPrefix(rpc.Name, "List") && rpc.Name == "List"+entitiesName {
+		operate = "List"
+	}
+	if strings.HasPrefix(rpc.Name, "Update") && rpc.Name == "Update"+entityName {
+		operate = "Update"
+	}
+	if strings.HasPrefix(rpc.Name, "Delete") && rpc.Name == "Delete"+entityName {
+		operate = "Delete"
+	}
+	if strings.HasPrefix(rpc.Name, "Get") && rpc.Name == "Get"+entityName {
+		operate = "Get"
+	}
+
 	comment := parser.GetComment(rpc.Doc())
 	streamServer := fmt.Sprintf("%s.%s_%s%s", goPackage, parser.CamelCase(serviceName),
 		parser.CamelCase(rpc.Name), "Server")
 	buffer, err := util.With("fun").Parse(text).Execute(map[string]any{
 		"logicName":    logicName,
+		"packageName":  goPackage,
+		"serviceName":  serviceName,
+		"entityName":   entityName,
+		"entitiesName": entitiesName,
+		"operate":      operate,
 		"method":       parser.CamelCase(rpc.Name),
 		"hasReq":       !rpc.StreamsRequest,
 		"request":      fmt.Sprintf("*%s.%s", goPackage, parser.CamelCase(rpc.RequestType)),

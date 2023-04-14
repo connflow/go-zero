@@ -234,6 +234,9 @@
         "remote": "{{.global.remote}}",
         "branch": "{{.global.branch}}"
       },
+      "template-common": {
+        "short": "Generate proto common template"
+      },
       "protoc": {
         "short": "Generate grpc code",
         "example": "goctl rpc protoc xx.proto --go_out=./pb --go-grpc_out=./pb --zrpc_out=.",

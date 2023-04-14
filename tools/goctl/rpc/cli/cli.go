@@ -128,3 +128,14 @@ func RPCTemplate(latest bool) error {
 
 	return generator.ProtoTmpl(protoFile)
 }
+
+// CommonTemplate is the entry for generate common template
+func CommonTemplate() error {
+	protoDir := VarStringOutput
+
+	if len(protoDir) == 0 {
+		return errors.New("missing -o")
+	}
+
+	return generator.ProtoCommonTmpl(protoDir)
+}

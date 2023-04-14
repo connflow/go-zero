@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/gobuffalo/flect"
 	"github.com/zeromicro/go-zero/tools/goctl/util"
 	"github.com/zeromicro/go-zero/tools/goctl/util/pathx"
 	"github.com/zeromicro/go-zero/tools/goctl/util/stringx"
@@ -28,9 +29,14 @@ func ProtoTmpl(out string) error {
 		return err
 	}
 
+	entity := flect.Singularize(flect.Capitalize(flect.Camelize(serviceName.Title())))
+	entities := flect.Pluralize(entity)
+
 	err = util.With("t").Parse(text).SaveTo(map[string]string{
 		"package":     serviceName.Untitle(),
 		"serviceName": serviceName.Title(),
+		"entity":      entity,
+		"entities":    entities,
 	}, out, false)
 	return err
 }

@@ -16,6 +16,10 @@ var (
 		return cli.RPCTemplate(false)
 	}))
 
+	commonCmd = cobrax.NewCommand("template-common", cobrax.WithRunE(func(command *cobra.Command, strings []string) error {
+		return cli.CommonTemplate()
+	}))
+
 	newCmd    = cobrax.NewCommand("new", cobrax.WithRunE(cli.RPCNew), cobrax.WithArgs(cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs)))
 	protocCmd = cobrax.NewCommand("protoc", cobrax.WithRunE(cli.ZRPC), cobrax.WithArgs(cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs)))
 )
@@ -26,6 +30,7 @@ func init() {
 		newCmdFlags      = newCmd.Flags()
 		protocCmdFlags   = protocCmd.Flags()
 		templateCmdFlags = templateCmd.Flags()
+		commonCmdFlags   = commonCmd.Flags()
 	)
 
 	rpcCmdFlags.StringVar(&cli.VarStringOutput, "o")
@@ -69,5 +74,7 @@ func init() {
 	templateCmdFlags.StringVar(&cli.VarStringRemote, "remote")
 	templateCmdFlags.StringVar(&cli.VarStringBranch, "branch")
 
-	Cmd.AddCommand(newCmd, protocCmd, templateCmd)
+	commonCmdFlags.StringVar(&cli.VarStringOutput, "o")
+
+	Cmd.AddCommand(newCmd, protocCmd, templateCmd, commonCmd)
 }
