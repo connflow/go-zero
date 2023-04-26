@@ -19,6 +19,11 @@ message IdRequest {
   string id = 1 [(validate.rules).string = {min_len: 20, max_len: 40}];
 }
 
+message ResourceIdRequest {
+  string account_id = 1 [(validate.rules).string = {min_len: 20, max_len: 40}];
+  string id = 2 [(validate.rules).string = {min_len: 20, max_len: 40}];
+}
+
 // Empty use for empty response 
 message Empty {
 
@@ -31,6 +36,15 @@ message QueryInfoRequest {
   string filter = 3;
   string sorting = 4;
   bool total = 5; 
+}
+
+message ResourceQueryInfoRequest {
+  int64 page_size = 1 [(validate.rules).int64 = {lte: 1000}];
+  string page_token = 2;
+  string filter = 3;
+  string sorting = 4;
+  bool total = 5;
+  string account_id = 6 [(validate.rules).string = {min_len: 20, max_len: 40}];
 }
 
 // BaseResponse is Common response for update and modify
@@ -67,14 +81,14 @@ message Update{{.entity}}Request {
 // {{.entity}} service for {{.entity}} operate in manager module
 service {{.entity}}s {
   // Get {{.entity}} use {{.entity}} id
-  rpc Get{{.entity}}(IdRequest) returns ({{.entity}}) {
+  rpc Get{{.entity}}(ResourceIdRequest) returns ({{.entity}}) {
     option (google.api.http) = {
       get: "/v1/manager/{{.entity}}/{id=*}"
     };
     option (google.api.method_signature) = "id";
   };
   // List {{.entities}} support pagequery
-  rpc List{{.entities}}(QueryInfoRequest) returns (List{{.entities}}Response) {
+  rpc List{{.entities}}(ResourceQueryInfoRequest) returns (List{{.entities}}Response) {
     option (google.api.http) = {
       get: "/v1/manager/{{.entities}}s"
     };
@@ -93,7 +107,7 @@ service {{.entity}}s {
     option (google.api.method_signature) = "id";
   };
   // Delete a {{.entity}} in manager module
-  rpc Delete{{.entity}}(IdRequest) returns (BaseResponse) {
+  rpc Delete{{.entity}}(ResourceIdRequest) returns (BaseResponse) {
     option (google.api.http) = {
       delete: "/v1/manager/{{.entity}}s/{id=*}"
     };

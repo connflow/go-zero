@@ -3,11 +3,7 @@ func (l *{{.logicName}}) {{.method}} ({{if .hasReq}}in {{.request}}{{if .stream}
 	// todo: check your logic here and delete this line
 
 	{{if eq .operate "Create"}}
-	err := in.Validate()
-	if err != nil {
-		return nil, err
-	}
-
+	var err error
 	if in.Data.Id == "" {
 		in.Data.Id = xid.New().String()
 	}
@@ -21,11 +17,6 @@ func (l *{{.logicName}}) {{.method}} ({{if .hasReq}}in {{.request}}{{if .stream}
 	}
 	return in.Data, nil
 	{{else if eq .operate "Update"}}
-	err := in.Validate()
-	if err != nil {
-		return nil, err
-	}
-
 	obj, err := l.svcCtx.{{.entityName}}Model.FindOne(l.ctx, in.Data.Id)
 	if err != nil {
 		return nil, err
@@ -44,23 +35,13 @@ func (l *{{.logicName}}) {{.method}} ({{if .hasReq}}in {{.request}}{{if .stream}
 
 	return &{{.responseType}}{}, nil
 	{{else if eq .operate "Delete" }}
-	err := in.Validate()
-	if err != nil {
-		return nil, err
-	}
-
-	err = l.svcCtx.{{.entityName}}Model.Delete(l.ctx, in.Id)
+	err := l.svcCtx.{{.entityName}}Model.Delete(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
 	}
 
 	return &{{.responseType}}{}, nil
 	{{else if eq .operate "Get" }}
-	err := in.Validate()
-	if err != nil {
-		return nil, err
-	}
-
 	obj, err := l.svcCtx.{{.entityName}}Model.FindOne(l.ctx, in.Id)
 	if err != nil {
 		return nil, err
@@ -72,11 +53,6 @@ func (l *{{.logicName}}) {{.method}} ({{if .hasReq}}in {{.request}}{{if .stream}
 	}
 	return res, nil
 	{{else if eq .operate "List" }}
-	err := in.Validate()
-	if err != nil {
-		return nil, err
-	}
-
 	q := queryinfo.QueryInfo{}
 
 	copier.Copy(&q, in)

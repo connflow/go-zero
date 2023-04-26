@@ -31,6 +31,13 @@ func main() {
 	})
 	defer s.Stop()
 
+	s.AddUnaryInterceptors(middleware.GetUnaryServerInterceptor(middleware.InterceptorOptions{
+		AuthnOptions: middleware.AuthnOptions{
+			JwksUrl:       c.JwksUrl,
+			AuthWhiteList: c.AuthWhiteList,
+		},
+	})...)
+
 	fmt.Printf("Starting rpc server at %s...\n", c.ListenOn)
 	s.Start()
 }
